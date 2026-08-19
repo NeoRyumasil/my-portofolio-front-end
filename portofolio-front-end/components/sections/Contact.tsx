@@ -10,17 +10,17 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="text-center space-y-12 pt-20 pb-10">
+    <section id="contact" className="text-center space-y-12 pt-20 pb-10 transition-colors duration-300">
       <div className="space-y-4">
-        <h2 className="text-4xl font-bold text-[#0F172A]">Get in Touch</h2>
-        <p className="text-[#0F172A]/70">Let's collaborate on something amazing. Find me on these platforms.</p>
+        <h2 className="text-4xl font-bold text-[#0F172A] dark:text-[#E11D48] font-space">Get in Touch</h2>
+        <p className="text-[#0F172A]/70 dark:text-white/70">Let's collaborate on something amazing. Find me on these platforms.</p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-6">
         {socials.map((social, i) => (
-          <a href="#" key={i} className="bg-white w-40 h-40 rounded-3xl shadow-lg shadow-[#0F172A]/5 border border-[#7DD3FC]/10 flex flex-col items-center justify-center gap-4 hover:-translate-y-2 hover:border-[#7DD3FC] transition duration-300">
-            <div className="text-[#0369A1] bg-[#F0F9FF] p-4 rounded-full">{social.icon}</div>
-            <span className="font-bold text-sm text-[#0F172A] font-space">{social.name}</span>
+          <a href="#" key={i} className="bg-white dark:bg-[#121212] w-40 h-40 rounded-3xl shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 flex flex-col items-center justify-center gap-4 hover:-translate-y-2 hover:border-[#7DD3FC] dark:hover:border-[#F43F5E] transition duration-300">
+            <div className="text-[#0369A1] dark:text-[#F43F5E] bg-[#F0F9FF] dark:bg-[#E11D48]/10 p-4 rounded-full">{social.icon}</div>
+            <span className="font-bold text-sm text-[#0F172A] dark:text-white font-space">{social.name}</span>
           </a>
         ))}
       </div>

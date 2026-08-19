@@ -9,8 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-manrope)'], 
-        space: ['var(--font-space)'],   
+        sans: ['var(--font-manrope)'],
+        space: ['var(--font-space)'],
+        hanken: ['var(--font-hanken)'],
+        mono: ['var(--font-jetbrains)'],
       },
     },
   },
