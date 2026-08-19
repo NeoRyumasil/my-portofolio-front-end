@@ -10,15 +10,11 @@ const hanken = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-hanken' })
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' });
 
 export const metadata = {
-  title: 'Alvin.dev | Portfolio',
+  title: 'Muhammad Alvin Ababil | Portfolio',
   description: 'Portfolio of Muhammad Alvin Ababil',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <html className="scroll-smooth" lang="en" suppressHydrationWarning>
       <body className={`
@@ -28,10 +24,13 @@ export default function RootLayout({
         dark:bg-[#000000] dark:text-[#ffffff] dark:selection:bg-[#E11D48]/40
         transition-colors duration-300
       `}>
+
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+
           <Header />
           {children}
           <Footer />
+          
         </ThemeProvider>
       </body>
     </html>

@@ -1,62 +1,83 @@
 import React from 'react';
-import { Bot, Languages, Cuboid } from 'lucide-react';
 
 export default function Experience() {
+  const projects = [
+    {
+      year: '2026 - Present',
+      title: 'Gudang Damar',
+      tech: ['Flutter', 'Laravel', 'Supabase'],
+      role: 'Fullstack Developer',
+      description: 'A comprehensive warehouse management application designed to optimize store inventory and price tracking. Built with a strong focus on seamless user experience using Flutter and robust business logic on the backend with Laravel.',
+      image: '/image_73338d.png'
+    },
+    {
+      year: '2026',
+      title: 'AI Chat Assistant',
+      tech: ['Next.js', 'Python', 'LLMs API'],
+      role: 'AI Developer',
+      description: 'An intelligent conversational agent and smart categorization system built with modern LLM API integrations. It focuses on delivering a soft, intuitive interface without the overhead of training custom models from scratch.',
+      image: '/image_73338d.png'
+    },
+    {
+      year: '2026',
+      title: 'CV Sign Language Translator',
+      tech: ['Python', 'OpenCV', 'Computer Vision'],
+      role: 'PKM-KC Lead',
+      description: 'A computer vision project developed under the Karsa Cipta (PKM-KC) framework. It utilizes machine learning models to interpret sign language in real-time, bridging communication gaps effectively.',
+      image: '/image_73338d.png'
+    }
+  ];
+
   return (
-    <section id="works" className="space-y-12 pt-20 transition-colors duration-300">
-      <div className="flex justify-between items-end">
-        <div className="space-y-4">
-          <h2 className="text-4xl font-bold text-[#0F172A] dark:text-[#E11D48] font-space">Selected Works</h2>
-          <p className="text-[#0F172A]/70 dark:text-white/70">A collection of digital experiences designed with purpose and precision.</p>
-        </div>
-        <a href="#" className="text-[#0369A1] dark:text-[#F43F5E] font-bold text-sm hover:underline hidden md:block font-space">VIEW ALL →</a>
+    <section id="works" className="space-y-16 pt-24 pb-12 transition-colors duration-300">
+      <div className="space-y-4 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-8 text-center">
+        <h2 className="text-5xl md:text-7xl font-extrabold text-[#0F172A] dark:text-white font-space tracking-tight">
+          Project Overview
+        </h2>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
-        {/* Card 1 */}
-        <div className="group bg-white dark:bg-[#121212] rounded-[32px] overflow-hidden shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#0369A1]/10 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/50 dark:hover:border-[#F43F5E]/50 transition-all duration-300 cursor-pointer">
-          <div className="h-48 bg-[#F0F9FF] dark:bg-[#000000] flex items-center justify-center text-[#7DD3FC] dark:text-[#991B1B] relative border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300 group-hover:bg-[#E0F2FE] dark:group-hover:bg-[#991B1B]/20">
-            <Bot size={64} className="absolute bottom-4 right-4 opacity-50 text-[#0369A1] dark:text-[#F43F5E] transition-transform duration-500 group-hover:scale-125 group-hover:-translate-y-2" />
-          </div>
-          <div className="p-8 space-y-4">
-            <h3 className="text-xl font-bold text-[#0F172A] dark:text-white font-space transition-colors duration-300 group-hover:text-[#0369A1] dark:group-hover:text-[#F43F5E]">AI Chat Assistant</h3>
-            <p className="text-sm text-[#0F172A]/70 dark:text-white/70 line-clamp-3">An intelligent conversational agent built with modern LLM integrations...</p>
-            <div className="flex gap-2 pt-2 font-space">
-              <span className="bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] text-xs font-bold px-3 py-1 rounded-full">Next.js</span>
-              <span className="bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] text-xs font-bold px-3 py-1 rounded-full">Python</span>
+      <div className="space-y-24 pt-8">
+        {projects.map((project, index) => (
+          <div key={index} className="group flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
+            
+            <div className="w-full lg:w-5/12 relative">
+              <div className="absolute -top-4 left-4 md:-left-4 z-10 bg-[#0F172A] dark:bg-[#121212] text-white border border-white/50 dark:border-[#991B1B]/80 px-4 py-1.5 font-bold font-space text-sm tracking-wider shadow-lg">
+                {project.year}
+              </div>
+              
+              <div className="relative w-full aspect-[4/3] bg-white dark:bg-[#121212] rounded-xl overflow-hidden shadow-xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/10 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 group-hover:border-[#7DD3FC] dark:group-hover:border-[#F43F5E] transition-all duration-500">
+                <div className="absolute inset-0 bg-grid-slate-200 dark:bg-grid-white/10 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,#000,rgba(0,0,0,0.6))] z-0"></div>
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 z-10 opacity-90 group-hover:opacity-100"
+                  style={{ backgroundImage: `url(${project.image})` }}
+                ></div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Card 2 */}
-        <div className="group bg-white dark:bg-[#121212] rounded-[32px] overflow-hidden shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#0369A1]/10 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/50 dark:hover:border-[#F43F5E]/50 transition-all duration-300 cursor-pointer">
-          <div className="h-48 bg-[#F0F9FF] dark:bg-[#000000] flex items-center justify-center text-[#7DD3FC] dark:text-[#991B1B] relative border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300 group-hover:bg-[#E0F2FE] dark:group-hover:bg-[#991B1B]/20">
-            <Languages size={64} className="absolute bottom-4 right-4 opacity-50 text-[#0369A1] dark:text-[#F43F5E] transition-transform duration-500 group-hover:scale-125 group-hover:-translate-y-2" />
-          </div>
-          <div className="p-8 space-y-4">
-            <h3 className="text-xl font-bold text-[#0F172A] dark:text-white font-space transition-colors duration-300 group-hover:text-[#0369A1] dark:group-hover:text-[#F43F5E]">CV Sign Language Translator</h3>
-            <p className="text-sm text-[#0F172A]/70 dark:text-white/70 line-clamp-3">A computer vision application utilizing machine learning models to interpret sign language...</p>
-            <div className="flex gap-2 pt-2 font-space">
-              <span className="bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] text-xs font-bold px-3 py-1 rounded-full">Python</span>
-              <span className="bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] text-xs font-bold px-3 py-1 rounded-full">OpenCV</span>
-            </div>
-          </div>
-        </div>
+            <div className="w-full lg:w-7/12 space-y-6 pt-2">
+              <h3 className="text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white font-space group-hover:text-[#0369A1] dark:group-hover:text-[#E11D48] transition-colors duration-300">
+                {project.title}
+              </h3>
 
-        {/* Card 3 */}
-        <div className="group bg-white dark:bg-[#121212] rounded-[32px] overflow-hidden shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#0369A1]/10 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/50 dark:hover:border-[#F43F5E]/50 transition-all duration-300 cursor-pointer">
-          <div className="h-48 bg-[#F0F9FF] dark:bg-[#000000] flex items-center justify-center text-[#7DD3FC] dark:text-[#991B1B] relative border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300 group-hover:bg-[#E0F2FE] dark:group-hover:bg-[#991B1B]/20">
-            <Cuboid size={64} className="absolute bottom-4 right-4 opacity-50 text-[#0369A1] dark:text-[#F43F5E] transition-transform duration-500 group-hover:scale-125 group-hover:-translate-y-2" />
-          </div>
-          <div className="p-8 space-y-4">
-            <h3 className="text-xl font-bold text-[#0F172A] dark:text-white font-space transition-colors duration-300 group-hover:text-[#0369A1] dark:group-hover:text-[#F43F5E]">Ethereal Realm</h3>
-            <p className="text-sm text-[#0F172A]/70 dark:text-white/70 line-clamp-3">A visually striking, interactive 3D web experience exploring abstract landscapes and soft-tech aesthetics.</p>
-            <div className="flex gap-2 pt-2 font-space">
-              <span className="bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] text-xs font-bold px-3 py-1 rounded-full">Unity</span>
-              <span className="bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] text-xs font-bold px-3 py-1 rounded-full">WebGL</span>
+              <div className="flex flex-wrap gap-3">
+                {project.tech.map((tech, i) => (
+                  <span key={i} className="bg-[#0369A1] dark:bg-[#0369A1] text-white px-4 py-1.5 rounded-full text-sm font-bold font-space shadow-sm">
+                    {tech}
+                  </span>
+                ))}
+                <span className="bg-[#E11D48] dark:bg-[#E11D48] text-white px-4 py-1.5 rounded-full text-sm font-bold font-space shadow-sm">
+                  {project.role}
+                </span>
+              </div>
+
+              <p className="text-lg md:text-xl text-[#0F172A]/80 dark:text-white/80 leading-relaxed font-medium">
+                {project.description}
+              </p>
             </div>
+
           </div>
-        </div>
+        ))}
+        
       </div>
     </section>
   );

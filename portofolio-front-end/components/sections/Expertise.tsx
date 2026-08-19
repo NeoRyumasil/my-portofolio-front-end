@@ -1,14 +1,5 @@
 import React from 'react';
-import { 
-  SiLaravel, 
-  SiNextdotjs, 
-  SiFlutter, 
-  SiPython, 
-  SiGo, 
-  SiUnity, 
-  SiSupabase,
-  SiGodotengine,
-} from 'react-icons/si';
+import { SiLaravel, SiNextdotjs, SiFlutter, SiPython, SiGo, SiUnity, SiSupabase, SiGodotengine } from 'react-icons/si';
 
 export default function Expertise() {
   const webSkills = [
@@ -27,15 +18,18 @@ export default function Expertise() {
 
   return (
     <section id="expertise" className="text-center space-y-12 pt-20 transition-colors duration-300">
-      <div className="space-y-4">
-        <h2 className="text-4xl font-bold text-[#0F172A] dark:text-[#E11D48] font-space">Technical Arsenal</h2>
-        <p className="text-[#0F172A]/70 dark:text-white/70">Tools and frameworks I wield to bring ideas to life.</p>
+      <div className="space-y-4 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-8 text-center">
+
+        <h2 className="text-5xl md:text-7xl font-extrabold text-[#0F172A] dark:text-white font-space tracking-tight">
+          Technical Arsenal
+        </h2>
+        <p className="text-lg md:text-xl text-[#0F172A]/70 dark:text-white/70">
+          Tools and frameworks I wield to bring ideas to life.
+        </p>
+
       </div>
 
-      {/* Grid untuk membagi 2 kotak (kiri WebDev, kanan GameDev) */}
-      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left">
-        
-        {/* Kotak Web Development */}
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left pt-4">
         <div className="bg-white dark:bg-[#121212]/80 p-8 md:p-10 rounded-[32px] shadow-xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300">
           <h3 className="text-2xl font-bold text-[#0F172A] dark:text-white font-space mb-8 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-4">
             Web & App Development
@@ -50,7 +44,6 @@ export default function Expertise() {
           </div>
         </div>
 
-        {/* Kotak Game Development */}
         <div className="bg-white dark:bg-[#121212]/80 p-8 md:p-10 rounded-[32px] shadow-xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300">
           <h3 className="text-2xl font-bold text-[#0F172A] dark:text-white font-space mb-8 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-4">
             Game Development
@@ -64,7 +57,7 @@ export default function Expertise() {
             ))}
           </div>
         </div>
-
+        
       </div>
     </section>
   );
