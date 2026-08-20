@@ -1,6 +1,6 @@
 import React from 'react';
 import Background from '@/components/sections/admin/Background';
-import LoginForm from '@/components/sections/admin/Login/LoginForm';
+import LoginForm from '@/components/sections/admin/login/LoginForm';
 
 export const metadata = {
   title: 'Admin Login',
