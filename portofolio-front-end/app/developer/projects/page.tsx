@@ -3,7 +3,7 @@ import GameProjects from '@/components/sections/projects/GameProjects';
 import Credentials from '@/components/sections/developer/Credentials';
 
 export const metadata = {
-  title: 'Muhammad Alvin Ababil |s Projects',
+  title: 'Muhammad Alvin Ababil | Projects',
   description: 'Showcase of Web and Game Development Projects',
 };
 
