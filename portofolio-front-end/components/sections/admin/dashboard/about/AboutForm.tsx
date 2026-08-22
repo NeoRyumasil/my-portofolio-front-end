@@ -26,7 +26,7 @@ export default function AboutForm() {
   return (
     <form onSubmit={handleSave} className="bg-white dark:bg-[#121212] p-8 md:p-10 rounded-[32px] shadow-sm border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 space-y-8">
       
-      {/* 1. Input Role (Badge atas) */}
+      {/* Role */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Role / Badge Title</label>
         <div className="relative flex items-center">
@@ -43,7 +43,7 @@ export default function AboutForm() {
         </div>
       </div>
 
-      {/* 2. Input Full Name */}
+      {/* Full Name */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Full Name</label>
         <div className="relative flex items-center">
@@ -60,7 +60,7 @@ export default function AboutForm() {
         </div>
       </div>
 
-      {/* 3. Input Tagline */}
+      {/* Tagline */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Hero Tagline</label>
         <div className="relative flex items-center">
@@ -77,7 +77,7 @@ export default function AboutForm() {
         </div>
       </div>
 
-      {/* 4. Input Bio */}
+      {/*  Bio */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">About Bio</label>
         <div className="relative">
@@ -95,7 +95,8 @@ export default function AboutForm() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* 5. Input CV Link */}
+
+        {/* CV Link */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">CV Document Link</label>
           <div className="relative flex items-center">
@@ -111,7 +112,7 @@ export default function AboutForm() {
           </div>
         </div>
 
-        {/* 6. Input Profile Image URL */}
+        {/* Profile Image URL */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Profile Image URL</label>
           <div className="relative flex items-center">
