@@ -1,5 +1,5 @@
 import React from 'react';
-import ContactForm from '@/components/sections/admin/dashboard/contact/contactForm';
+import ContactForm from '@/components/sections/admin/dashboard/contact/ContactForm';
 
 export const metadata = {
   title: 'Contact & Socials | Admin Portal',
@@ -16,7 +16,7 @@ export default function ContactPage() {
         </h1>
       </div>
 
-      {/* CRUD Manager Component */}
+      {/* Form */}
       <ContactForm />
       
     </div>
