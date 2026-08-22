@@ -11,7 +11,7 @@ export default function Stats() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       
-      {/* Card 1: Total Projects */}
+      {/* Total Projects */}
       <div className="group bg-white dark:bg-[#121212] p-6 rounded-3xl shadow-sm border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 flex flex-col justify-center gap-4 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#0F172A]/5 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/60 dark:hover:border-[#E11D48]/60 transition-all duration-300 cursor-pointer">
         <div className="flex items-center gap-4">
           <div className="p-4 bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] rounded-2xl group-hover:scale-110 group-hover:bg-[#0369A1] dark:group-hover:bg-[#E11D48] group-hover:text-white transition-all duration-300">
@@ -36,7 +36,7 @@ export default function Stats() {
         </div>
       </div>
 
-      {/* Card 2: Total Credentials */}
+      {/* Total Credentials */}
       <div className="group bg-white dark:bg-[#121212] p-6 rounded-3xl shadow-sm border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 flex items-center gap-4 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#0F172A]/5 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/60 dark:hover:border-[#E11D48]/60 transition-all duration-300 cursor-pointer">
         <div className="p-4 bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] rounded-2xl group-hover:scale-110 group-hover:bg-[#0369A1] dark:group-hover:bg-[#E11D48] group-hover:text-white transition-all duration-300">
           <Star size={24} />
@@ -47,7 +47,7 @@ export default function Stats() {
         </div>
       </div>
 
-      {/* Card 3: Page Views */}
+      {/* Page Views */}
       <div className="group bg-white dark:bg-[#121212] p-6 rounded-3xl shadow-sm border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 flex items-center gap-4 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#0F172A]/5 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/60 dark:hover:border-[#E11D48]/60 transition-all duration-300 cursor-pointer">
         <div className="p-4 bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] rounded-2xl group-hover:scale-110 group-hover:bg-[#0369A1] dark:group-hover:bg-[#E11D48] group-hover:text-white transition-all duration-300">
           <Eye size={24} />
