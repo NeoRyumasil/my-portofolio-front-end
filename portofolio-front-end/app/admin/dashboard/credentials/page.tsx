@@ -1,5 +1,5 @@
 import React from 'react';
-import CredentialForm from '@/components/sections/admin/dashboard/credential/credentialForm';
+import CredentialForm from '@/components/sections/admin/dashboard/credential/CredentialForm';
 
 export const metadata = {
   title: 'Credentials | Admin Portal',
