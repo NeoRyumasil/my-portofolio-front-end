@@ -1,5 +1,5 @@
 import React from 'react';
-import WebProject from '@/components/sections/admin/dashboard/webProject/webProject';
+import WebProject from '@/components/sections/admin/dashboard/webProject/WebProject';
 
 export const metadata = {
   title: 'Web & App Projects | Admin Portal',
