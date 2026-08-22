@@ -1,5 +1,5 @@
 import React from 'react';
-import GameProject from '@/components/sections/admin/dashboard/gameProject/gameProject';
+import GameProject from '@/components/sections/admin/dashboard/gameProject/GameProject';
 
 export const metadata = {
   title: 'Game Projects | Admin Portal',
