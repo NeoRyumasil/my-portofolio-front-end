@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, User, Code, GraduationCap, Briefcase, Gamepad2, Award, Phone, LogOut } from 'lucide-react';
+import { LayoutDashboard, User, Code, GraduationCap, Briefcase, Gamepad2, Award, Phone, LogOut, UserCog } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -17,6 +17,7 @@ export default function Sidebar() {
     { title: 'Game Projects', icon: <Gamepad2 size={20} />, link: '/admin/dashboard/game-projects' },
     { title: 'Credentials', icon: <Award size={20} />, link: '/admin/dashboard/credentials' },
     { title: 'Contact & Socials', icon: <Phone size={20} />, link: '/admin/dashboard/contact' },
+    { title: 'Account Settings', icon: <UserCog size={20} />, link: '/admin/dashboard/account' }
   ];
 
   return (
