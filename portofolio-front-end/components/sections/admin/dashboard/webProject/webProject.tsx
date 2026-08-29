@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Loader2 } from 'lucide-react';
 import Card, { WebProject as WebProjectType } from '@/components/sections/admin/dashboard/webProject/Card';
 import Modal from '@/components/sections/admin/dashboard/webProject/Modal';
 
 export default function WebProject() {
-  const [projects, setProjects] = useState<WebProjectType[]>([
-    { id: 'gudang-damar', year: '2026 - Present', title: 'Gudang Damar', tech: ['Flutter', 'Laravel', 'Supabase'], role: 'Fullstack Developer', description: 'A comprehensive warehouse management application designed to optimize store inventory and price tracking. Built with a strong focus on seamless user experience using Flutter and robust business logic on the backend with Laravel.', image: '/image_73338d.png', url: 'https://gudangdamar.example.com' },
-    { id: 'ase-dashboard', year: '2026', title: 'ASE Media Dashboard', tech: ['Next.js', 'Supabase'], role: 'PR & Dev', description: 'An internal dashboard to manage media partner collaborations and streamline communication deliverables.', image: '/image_73338d.png', url: 'https://ase-dashboard.example.com' },
-    { id: 'taskmaster-pro', year: '2025', title: 'TaskMaster Pro', tech: ['Vue.js', 'Node.js'], role: 'Backend Dev', description: 'A productivity app aimed at teams, featuring Kanban boards, time tracking, and automated reporting.', image: '/image_73338d.png', url: 'https://github.com/alvin/taskmaster' }
-  ]);
-
+  const [projects, setProjects] = useState<WebProjectType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [formData, setFormData] = useState({
     year: '',
@@ -24,6 +21,29 @@ export default function WebProject() {
     image: '',
     url: ''
   });
+
+  const fetchProjects = async () => {
+    setIsLoading(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${baseUrl}/api/web-projects?limit=50`);
+      const json = await response.json();
+      
+      if (response.ok && json.success) {
+        setProjects(json.data);
+      }
+
+    } catch (error) {
+      console.error("Gagal mengambil data web project:", error);
+
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   const handleOpenModal = (project?: WebProjectType) => {
     if (project) {
@@ -37,10 +57,12 @@ export default function WebProject() {
         image: project.image,
         url: project.url || ''
       });
+
     } else {
       setEditingId(null);
       setFormData({ year: '', title: '', techString: '', role: '', description: '', image: '', url: '' });
     }
+
     setIsModalOpen(true);
   };
 
@@ -49,33 +71,85 @@ export default function WebProject() {
     setEditingId(null);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     
-    const techArray = formData.techString.split(',').map(item => item.trim()).filter(item => item !== '');
+    try {
+      const token = localStorage.getItem('token');
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      
+      const techArray = formData.techString.split(',').map(item => item.trim()).filter(item => item !== '');
 
-    const projectData: WebProjectType = {
-      id: editingId || formData.title.toLowerCase().replace(/\s+/g, '-'),
-      year: formData.year,
-      title: formData.title,
-      tech: techArray,
-      role: formData.role,
-      description: formData.description,
-      image: formData.image || '/image_73338d.png',
-      url: formData.url
-    };
+      const payload = {
+        title: formData.title,
+        year: formData.year,
+        tech: techArray,
+        role: formData.role,
+        description: formData.description,
+        image: formData.image,
+        url: formData.url
+      };
 
-    if (editingId) {
-      setProjects(projects.map(p => p.id === editingId ? projectData : p));
-    } else {
-      setProjects([projectData, ...projects]);
+      const method = editingId ? 'PUT' : 'POST';
+      const url = editingId ? `${baseUrl}/api/web-projects/${editingId}` : `${baseUrl}/api/web-projects`;
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await response.json();
+
+      if (response.ok && json.success) {
+        alert(json.message);
+        fetchProjects(); 
+        handleCloseModal();
+
+      } else {
+        alert(json.message || 'Gagal menyimpan web project');
+      }
+
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Terjadi kesalahan pada server.");
+
+    } finally {
+      setIsSaving(false);
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      setProjects(projects.filter(p => p.id !== id));
+      try {
+        const token = localStorage.getItem('token');
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        
+        const response = await fetch(`${baseUrl}/api/web-projects/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const json = await response.json();
+
+        if (response.ok && json.success) {
+          alert("Web project berhasil dihapus!");
+          setProjects(projects.filter(p => p.id !== id));
+          
+        } else {
+          alert(json.message || 'Gagal menghapus proyek');
+        }
+
+      } catch (error) {
+        console.error("Delete error:", error);
+        alert("Terjadi kesalahan pada server.");
+      }
     }
   };
 
@@ -91,16 +165,26 @@ export default function WebProject() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {projects.map((project) => (
-          <Card 
-            key={project.id}
-            project={project}
-            onEdit={handleOpenModal}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-10 h-10 animate-spin text-[#0369A1] dark:text-[#E11D48]" />
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-12 border-2 border-dashed border-[#7DD3FC]/30 dark:border-[#991B1B]/30 rounded-[32px]">
+          <p className="text-[#0F172A]/50 dark:text-white/50 font-space">Belum ada web project yang ditambahkan.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {projects.map((project) => (
+            <Card 
+              key={project.id}
+              project={project}
+              onEdit={handleOpenModal}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
       <Modal 
         isOpen={isModalOpen}
@@ -109,6 +193,7 @@ export default function WebProject() {
         setFormData={setFormData}
         onClose={handleCloseModal}
         onSave={handleSave}
+        isSaving={isSaving}
       />
     </div>
   );

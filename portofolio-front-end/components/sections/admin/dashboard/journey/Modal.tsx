@@ -1,15 +1,17 @@
 import React from 'react';
-import { X, Save, Calendar, MapPin, AlignLeft, GraduationCap } from 'lucide-react';
+import { X, Save, Calendar, MapPin, AlignLeft, GraduationCap, Loader2 } from 'lucide-react';
 
 interface JourneyModalProps {
   isOpen: boolean;
   editingId: string | null;
+  isSaving: boolean;
   formData: {
     year: string;
     label: string;
     title: string;
     description: string;
   };
+  
   setFormData: React.Dispatch<React.SetStateAction<{
     year: string;
     label: string;
@@ -20,7 +22,7 @@ interface JourneyModalProps {
   onSave: (e: React.FormEvent) => void;
 }
 
-export default function Modal({ isOpen, editingId, formData, setFormData, onClose, onSave }: JourneyModalProps) {
+export default function Modal({ isOpen, editingId, formData, setFormData, onClose, onSave, isSaving }: JourneyModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -98,9 +100,11 @@ export default function Modal({ isOpen, editingId, formData, setFormData, onClos
 
           <button
             type="submit"
-            className="w-full flex justify-center items-center gap-2 bg-[#0369A1] dark:bg-[#E11D48] text-white px-6 py-4 rounded-xl font-bold font-space shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-2"
+            disabled={isSaving}
+            className="w-full flex justify-center items-center gap-2 bg-[#0369A1] dark:bg-[#E11D48] text-white px-6 py-4 rounded-xl font-bold font-space shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-2 disabled:opacity-70 disabled:hover:translate-y-0"
           >
-            <Save size={20} /> Save Milestone
+            {isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+            {isSaving ? 'Saving...' : 'Save Milestone'}
           </button>
         </form>
 

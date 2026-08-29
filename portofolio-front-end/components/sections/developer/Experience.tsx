@@ -1,68 +1,43 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 
 export default function Experience() {
   const [activeCategory, setActiveCategory] = useState<'web' | 'game'>('web');
+  const [webProjects, setWebProjects] = useState<any[]>([]);
+  const [gameProjects, setGameProjects] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const allProjects = [
-    {
-      id: 'gudang-damar',
-      category: 'web',
-      year: '2026 - Present',
-      title: 'Gudang Damar',
-      tech: ['Flutter', 'Laravel', 'Supabase'],
-      role: 'Fullstack Developer',
-      description: 'A comprehensive warehouse management application designed to optimize store inventory and price tracking. Built with a strong focus on seamless user experience using Flutter and robust business logic on the backend with Laravel.',
-      image: '/image_73338d.png'
-    },
-    {
-      id: 'ai-chat',
-      category: 'web',
-      year: '2026',
-      title: 'AI Chat Assistant',
-      tech: ['Next.js', 'Python', 'LLMs API'],
-      role: 'AI Developer',
-      description: 'An intelligent conversational agent and smart categorization system built with modern LLM API integrations. It focuses on delivering a soft, intuitive interface without the overhead of training custom models from scratch.',
-      image: '/image_73338d.png'
-    },
-    {
-      id: 'cv-sign-language',
-      category: 'web',
-      year: '2026',
-      title: 'CV Sign Language',
-      tech: ['Python', 'OpenCV'],
-      role: 'PKM-KC Lead',
-      description: 'A computer vision project developed under the Karsa Cipta (PKM-KC) framework. It utilizes machine learning models to interpret sign language in real-time, bridging communication gaps effectively.',
-      image: '/image_73338d.png'
-    },
-    {
-      id: 'hutan-kabut',
-      category: 'game',
-      year: '2026',
-      title: 'Kehidupan Baru di Hutan Kabut',
-      tech: ['RPG Maker', 'Pixel Art', 'Storytelling'],
-      role: 'Game Designer & Writer',
-      description: 'An interactive narrative game featuring unique characters like Rodhette, Granny, and Mr. Wolf. Focuses on immersive storytelling, branching dialogues, and vertical 4-panel visual mechanics tailored for engaging player experiences.',
-      image: '/image_73338d.png'
-    },
-    {
-      id: 'ethereal-realm',
-      category: 'game',
-      year: '2025',
-      title: 'Ethereal Realm',
-      tech: ['Unity', 'C#', 'WebGL'],
-      role: 'Game Programmer',
-      description: 'A visually striking, interactive 3D web experience exploring abstract landscapes and soft-tech aesthetics. Developed complex character controllers and environment interactions using Unity and C#.',
-      image: '/image_73338d.png'
-    }
-  ];
+  useEffect(() => {
+    const fetchExperience = async () => {
+      setIsLoading(true);
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        
+        const [webRes, gameRes] = await Promise.all([
+          fetch(`${baseUrl}/api/web-projects?limit=3`),
+          fetch(`${baseUrl}/api/game-projects?limit=3`)
+        ]);
 
-  const displayedProjects = allProjects
-    .filter((project) => project.category === activeCategory)
-    .slice(0, 3);
+        const webJson = await webRes.json();
+        const gameJson = await gameRes.json();
+
+        if (webJson.success) setWebProjects(webJson.data);
+        
+        if (gameJson.success) setGameProjects(gameJson.data);
+      } catch (error) {
+        console.error("Gagal mengambil data experience:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExperience();
+  }, []);
+
+  const displayedProjects = activeCategory === 'web' ? webProjects : gameProjects;
 
   return (
     <section id="works" className="space-y-12 pt-24 pb-12 transition-colors duration-300">
@@ -72,7 +47,6 @@ export default function Experience() {
         </h2>
       </div>
 
-      {/* Tabs Filter */}
       <div className="flex justify-center items-center gap-4 pt-4">
         <button 
           onClick={() => setActiveCategory('web')}
@@ -96,63 +70,61 @@ export default function Experience() {
         </button>
       </div>
 
-      {/* Daftar Project */}
-      <div className="space-y-24 pt-8 min-h-[600px]">
-        {displayedProjects.map((project, index) => (
-          <div key={project.id} className="group flex flex-col lg:flex-row gap-8 lg:gap-16 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
-            
-            {/* Gambar */}
-            <div className="w-full lg:w-5/12 relative">
-              <div className="absolute -top-4 left-4 md:-left-4 z-10 bg-[#0F172A] dark:bg-[#121212] text-white border border-white/50 dark:border-[#991B1B]/80 px-4 py-1.5 font-bold font-space text-sm tracking-wider shadow-lg">
-                {project.year}
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20 min-h-[400px]">
+          <Loader2 className="w-12 h-12 animate-spin text-[#0369A1] dark:text-[#E11D48]" />
+        </div>
+      ) : (
+        <div className="space-y-24 pt-8 min-h-[600px]">
+          {displayedProjects.length === 0 ? (
+            <p className="text-center text-gray-500">Belum ada proyek di kategori ini.</p>
+          ) : (
+            displayedProjects.map((project) => (
+              <div key={project.id} className="group flex flex-col lg:flex-row gap-8 lg:gap-16 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="w-full lg:w-5/12 relative">
+                  <div className="absolute -top-4 left-4 md:-left-4 z-10 bg-[#0F172A] dark:bg-[#121212] text-white border border-white/50 dark:border-[#991B1B]/80 px-4 py-1.5 font-bold font-space text-sm tracking-wider shadow-lg">
+                    {project.year}
+                  </div>
+                  <div className="relative w-full aspect-[4/3] bg-white dark:bg-[#121212] rounded-xl overflow-hidden shadow-xl border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 group-hover:border-[#7DD3FC] dark:group-hover:border-[#F43F5E] transition-all duration-500">
+                    <div className="absolute inset-0 bg-grid-slate-200 dark:bg-grid-white/10 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,#000,rgba(0,0,0,0.6))] z-0"></div>
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 z-10 opacity-90 group-hover:opacity-100"
+                      style={{ backgroundImage: `url(${project.image})` }}
+                    ></div>
+                  </div>
+                </div>
+                <div className="w-full lg:w-7/12 space-y-6 pt-2">
+                  <h3 className="text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white font-space group-hover:text-[#0369A1] dark:group-hover:text-[#E11D48] transition-colors duration-300">
+                    {project.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {project.tech && project.tech.map((tech: string, i: number) => (
+                      <span key={i} className="bg-[#0369A1] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
+                        {tech}
+                      </span>
+                    ))}
+                    <span className="bg-[#E11D48] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
+                      {project.role}
+                    </span>
+                  </div>
+                  <p className="text-lg md:text-xl text-[#0F172A]/80 dark:text-white/80 leading-relaxed font-medium">
+                    {project.description}
+                  </p>
+                  <div className="pt-4">
+                    <Link 
+                      href={`/projects/${project.id}`} 
+                      className="inline-flex items-center gap-2 text-[#0369A1] dark:text-[#E11D48] font-bold font-space text-base md:text-lg hover:underline transition-all"
+                    >
+                      View Detail <ArrowRight size={20} />
+                    </Link>
+                  </div>
+                </div>
               </div>
-              
-              <div className="relative w-full aspect-[4/3] bg-white dark:bg-[#121212] rounded-xl overflow-hidden shadow-xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/10 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 group-hover:border-[#7DD3FC] dark:group-hover:border-[#F43F5E] transition-all duration-500">
-                <div className="absolute inset-0 bg-grid-slate-200 dark:bg-grid-white/10 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,#000,rgba(0,0,0,0.6))] z-0"></div>
-                <div 
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 z-10 opacity-90 group-hover:opacity-100"
-                  style={{ backgroundImage: `url(${project.image})` }}
-                ></div>
-              </div>
-            </div>
+            ))
+          )}
+        </div>
+      )}
 
-            {/* Detail */}
-            <div className="w-full lg:w-7/12 space-y-6 pt-2">
-              <h3 className="text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white font-space group-hover:text-[#0369A1] dark:group-hover:text-[#E11D48] transition-colors duration-300">
-                {project.title}
-              </h3>
-
-              <div className="flex flex-wrap gap-3">
-                {project.tech.map((tech, i) => (
-                  <span key={i} className="bg-[#0369A1] dark:bg-[#0369A1] text-white px-4 py-1.5 rounded-full text-sm font-bold font-space shadow-sm">
-                    {tech}
-                  </span>
-                ))}
-                <span className="bg-[#E11D48] dark:bg-[#E11D48] text-white px-4 py-1.5 rounded-full text-sm font-bold font-space shadow-sm">
-                  {project.role}
-                </span>
-              </div>
-
-              <p className="text-lg md:text-xl text-[#0F172A]/80 dark:text-white/80 leading-relaxed font-medium">
-                {project.description}
-              </p>
-
-              {/* View Detail */}
-              <div className="pt-4">
-                <Link 
-                  href={`/projects/${project.id}`} 
-                  className="inline-flex items-center gap-2 text-[#0369A1] dark:text-[#E11D48] font-bold font-space text-base md:text-lg hover:underline transition-all"
-                >
-                  View Detail <ArrowRight size={20} />
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        ))}
-      </div>
-
-      {/* View All Projects */}
       <div className="flex justify-center pt-16 border-t border-[#7DD3FC]/10 dark:border-[#991B1B]/20">
         <Link 
           href="/developer/projects" 
@@ -162,7 +134,6 @@ export default function Experience() {
           <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
-
     </section>
   );
 }

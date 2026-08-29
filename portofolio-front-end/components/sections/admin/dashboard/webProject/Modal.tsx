@@ -1,9 +1,10 @@
-import React from 'react';
-import { X, Save, Image as ImageIcon, Calendar, Briefcase, Code, AlignLeft, Type, Link as LinkIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Save, Image as ImageIcon, Calendar, Briefcase, Code, AlignLeft, Type, Link as LinkIcon, Loader2, UploadCloud } from 'lucide-react';
 
 interface WebProjectModalProps {
   isOpen: boolean;
   editingId: string | null;
+  isSaving: boolean;
   formData: {
     year: string;
     title: string;
@@ -13,6 +14,7 @@ interface WebProjectModalProps {
     image: string;
     url: string;
   };
+  
   setFormData: React.Dispatch<React.SetStateAction<{
     year: string;
     title: string;
@@ -26,8 +28,46 @@ interface WebProjectModalProps {
   onSave: (e: React.FormEvent) => void;
 }
 
-export default function Modal({isOpen, editingId, formData, setFormData, onClose, onSave }: WebProjectModalProps) {
+export default function Modal({isOpen, editingId, formData, setFormData, onClose, onSave, isSaving }: WebProjectModalProps) {
+  const [isUploading, setIsUploading] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      
+      const response = await fetch(`${baseUrl}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: uploadData
+      });
+
+      const json = await response.json();
+
+      if (response.ok && json.success) {
+        setFormData({ ...formData, image: json.url });
+      } else {
+        alert(json.message || 'Gagal mengunggah gambar ke Google Drive');
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Terjadi kesalahan server saat mengunggah gambar.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 overflow-y-auto">
@@ -83,22 +123,69 @@ export default function Modal({isOpen, editingId, formData, setFormData, onClose
             <input type="url" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value })} placeholder="https://..." className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48]" />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center gap-2">
-              <ImageIcon size={16} /> Thumbnail Image URL
+          {/* UPLOAD GAMBAR SECTION */}
+          <div className="space-y-2 border border-[#7DD3FC]/30 dark:border-[#991B1B]/30 p-4 rounded-2xl bg-[#F0F9FF]/20 dark:bg-[#000000]/20">
+            <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center gap-2 mb-3">
+              <ImageIcon size={16} /> Project Thumbnail
             </label>
-            <input type="text" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="/image_placeholder.png" className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48]" />
+            
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+
+              {/* Preview Gambar */}
+              <div className="w-full sm:w-32 h-24 bg-[#F0F9FF] dark:bg-[#121212] rounded-xl border border-dashed border-[#0369A1]/50 dark:border-[#E11D48]/50 overflow-hidden flex items-center justify-center shrink-0 relative group">
+                {formData.image ? (
+                  <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <ImageIcon className="text-[#0F172A]/30 dark:text-white/30" size={32} />
+                )}
+                {isUploading && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <Loader2 className="animate-spin text-white" size={24} />
+                  </div>
+                )}
+              </div>
+
+              {/* Tombol Upload & Input File */}
+              <div className="flex-1 w-full space-y-2">
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+                  />
+                  <div className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#0369A1]/10 dark:bg-[#E11D48]/10 text-[#0369A1] dark:text-[#E11D48] border border-[#0369A1]/30 dark:border-[#E11D48]/30 rounded-xl font-bold font-space transition-colors hover:bg-[#0369A1]/20 dark:hover:bg-[#E11D48]/20">
+                    {isUploading ? <Loader2 size={18} className="animate-spin" /> : <UploadCloud size={18} />}
+                    {isUploading ? 'Uploading to GDrive...' : 'Choose Image File'}
+                  </div>
+                </div>
+            
+                <input 
+                  type="text" 
+                  value={formData.image} 
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })} 
+                  placeholder="Or paste GDrive URL here..." 
+                  className="w-full px-4 py-2 text-xs bg-transparent border-b border-[#7DD3FC]/50 dark:border-[#991B1B]/50 text-[#0F172A] dark:text-white focus:outline-none focus:border-[#0369A1] dark:focus:border-[#E11D48]" 
+                />
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center gap-2">
               <AlignLeft size={16} /> Description
             </label>
-            <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={4} className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48] resize-none" required />
+            <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48] resize-none" required />
           </div>
 
-          <button type="submit" className="w-full flex justify-center items-center gap-2 bg-[#0369A1] dark:bg-[#E11D48] text-white px-6 py-4 rounded-xl font-bold font-space shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-2">
-            <Save size={20} /> Save Project
+          <button 
+            type="submit" 
+            disabled={isSaving || isUploading}
+            className="w-full flex justify-center items-center gap-2 bg-[#0369A1] dark:bg-[#E11D48] text-white px-6 py-4 rounded-xl font-bold font-space shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-2 disabled:opacity-70 disabled:hover:translate-y-0"
+          >
+            {isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+            {isSaving ? 'Saving...' : 'Save Project'}
           </button>
         </form>
 

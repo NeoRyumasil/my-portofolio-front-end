@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Loader2 } from 'lucide-react';
 import Card, { Credential } from '@/components/sections/admin/dashboard/credential/Card';
 import Modal from '@/components/sections/admin/dashboard/credential/Modal';
 
 export default function CredentialForm() {
-  const [credentials, setCredentials] = useState<Credential[]>([
-    { id: 'azure-ai-900', title: 'Azure AI 900 Fundamentals', issuer: 'Microsoft', image: '/image_73338d.png', url: 'https://learn.microsoft.com/' },
-    { id: 'cloud-architect', title: 'Cloud Architect Basics', issuer: 'Various', image: '/image_73338d.png', url: '#' },
-    { id: 'softdev-mastery', title: 'SoftDev Mastery', issuer: 'Tech Institute', image: '/image_73338d.png', url: '#' },
-  ]);
-
+  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -21,6 +18,29 @@ export default function CredentialForm() {
     image: '',
     url: ''
   });
+
+  const fetchCredentials = async () => {
+    setIsLoading(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${baseUrl}/api/credentials?limit=50`);
+      const json = await response.json();
+      
+      if (response.ok && json.success) {
+        setCredentials(json.data);
+      }
+
+    } catch (error) {
+      console.error("Gagal mengambil data kredensial:", error);
+
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCredentials();
+  }, []);
 
   const handleOpenModal = (cert?: Credential) => {
     if (cert) {
@@ -31,6 +51,7 @@ export default function CredentialForm() {
         image: cert.image,
         url: cert.url || ''
       });
+
     } else {
       setEditingId(null);
       setFormData({ title: '', issuer: '', image: '', url: '' });
@@ -43,27 +64,71 @@ export default function CredentialForm() {
     setEditingId(null);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const certData: Credential = {
-      id: editingId || formData.title.toLowerCase().replace(/\s+/g, '-'),
-      title: formData.title,
-      issuer: formData.issuer,
-      image: formData.image || '/image_73338d.png',
-      url: formData.url
-    };
+    setIsSaving(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const method = editingId ? 'PUT' : 'POST';
+      const url = editingId ? `${baseUrl}/api/credentials/${editingId}` : `${baseUrl}/api/credentials`;
 
-    if (editingId) {
-      setCredentials(credentials.map(c => c.id === editingId ? certData : c));
-    } else {
-      setCredentials([certData, ...credentials]);
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const json = await response.json();
+
+      if (response.ok && json.success) {
+        alert(json.message);
+        fetchCredentials(); 
+        handleCloseModal();
+      } else {
+        alert(json.message || 'Gagal menyimpan kredensial');
+      }
+
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Terjadi kesalahan pada server.");
+
+    } finally {
+      setIsSaving(false);
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this credential?')) {
-      setCredentials(credentials.filter(c => c.id !== id));
+      try {
+        const token = localStorage.getItem('token');
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        
+        const response = await fetch(`${baseUrl}/api/credentials/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const json = await response.json();
+
+        if (response.ok && json.success) {
+          alert("Kredensial berhasil dihapus!");
+          setCredentials(credentials.filter(c => c.id !== id));
+
+        } else {
+          alert(json.message || 'Gagal menghapus kredensial');
+        }
+        
+      } catch (error) {
+        console.error("Delete error:", error);
+        alert("Terjadi kesalahan pada server.");
+      }
     }
   };
 
@@ -79,16 +144,26 @@ export default function CredentialForm() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {credentials.map((cert) => (
-          <Card 
-            key={cert.id}
-            cert={cert}
-            onEdit={handleOpenModal}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-10 h-10 animate-spin text-[#0369A1] dark:text-[#E11D48]" />
+        </div>
+      ) : credentials.length === 0 ? (
+        <div className="text-center py-12 border-2 border-dashed border-[#7DD3FC]/30 dark:border-[#991B1B]/30 rounded-[32px]">
+          <p className="text-[#0F172A]/50 dark:text-white/50 font-space">Belum ada kredensial yang ditambahkan.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {credentials.map((cert) => (
+            <Card 
+              key={cert.id}
+              cert={cert}
+              onEdit={handleOpenModal}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
       <Modal 
         isOpen={isModalOpen}
@@ -97,6 +172,7 @@ export default function CredentialForm() {
         setFormData={setFormData}
         onClose={handleCloseModal}
         onSave={handleSave}
+        isSaving={isSaving}
       />
     </div>
   );

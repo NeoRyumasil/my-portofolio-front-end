@@ -1,20 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Loader2 } from 'lucide-react';
 import Card, { ContactLink } from '@/components/sections/admin/dashboard/contact/Card';
 import Modal from '@/components/sections/admin/dashboard/contact/Modal';
 
 export default function ContactForm() {
-  const [contacts, setContacts] = useState<ContactLink[]>([
-    { id: '1', platform: 'LinkedIn', url: 'https://linkedin.com/in/alvin', iconType: 'lucide', iconValue: 'briefcase' },
-    { id: '2', platform: 'GitHub', url: 'https://github.com/alvin', iconType: 'lucide', iconValue: 'globe' },
-    { id: '3', platform: 'Email', url: 'mailto:alvin@example.com', iconType: 'lucide', iconValue: 'mail' },
-    { id: '4', platform: 'X / Twitter', url: 'https://twitter.com/alvin', iconType: 'lucide', iconValue: 'twitter' },
-  ]);
-
+  const [contacts, setContacts] = useState<ContactLink[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [formData, setFormData] = useState({
     platform: '',
@@ -22,6 +18,27 @@ export default function ContactForm() {
     iconType: 'lucide' as 'lucide' | 'image',
     iconValue: 'mail'
   });
+
+  const fetchContacts = async () => {
+    setIsLoading(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${baseUrl}/api/contacts`);
+      const json = await response.json();
+      
+      if (response.ok && json.success) {
+        setContacts(json.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data kontak:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchContacts();
+  }, []);
 
   const handleOpenModal = (contact?: ContactLink) => {
     if (contact) {
@@ -32,10 +49,12 @@ export default function ContactForm() {
         iconType: contact.iconType || 'lucide',
         iconValue: contact.iconValue
       });
+
     } else {
       setEditingId(null);
       setFormData({ platform: '', url: '', iconType: 'lucide', iconValue: 'mail' });
     }
+
     setIsModalOpen(true);
   };
 
@@ -44,27 +63,71 @@ export default function ContactForm() {
     setEditingId(null);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const contactData: ContactLink = {
-      id: editingId || Date.now().toString(),
-      platform: formData.platform,
-      url: formData.url,
-      iconType: formData.iconType,
-      iconValue: formData.iconValue
-    };
+    setIsSaving(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const method = editingId ? 'PUT' : 'POST';
+      const url = editingId ? `${baseUrl}/api/contacts/${editingId}` : `${baseUrl}/api/contacts`;
 
-    if (editingId) {
-      setContacts(contacts.map(c => c.id === editingId ? contactData : c));
-    } else {
-      setContacts([...contacts, contactData]);
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const json = await response.json();
+
+      if (response.ok && json.success) {
+        alert(json.message);
+        fetchContacts(); 
+        handleCloseModal();
+      } else {
+        alert(json.message || 'Gagal menyimpan kontak');
+      }
+
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Terjadi kesalahan pada server.");
+
+    } finally {
+      setIsSaving(false);
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this contact link?')) {
-      setContacts(contacts.filter(c => c.id !== id));
+      try {
+        const token = localStorage.getItem('token');
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        
+        const response = await fetch(`${baseUrl}/api/contacts/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const json = await response.json();
+
+        if (response.ok && json.success) {
+          alert("Kontak berhasil dihapus!");
+          setContacts(contacts.filter(c => c.id !== id));
+
+        } else {
+          alert(json.message || 'Gagal menghapus kontak');
+        }
+        
+      } catch (error) {
+        console.error("Delete error:", error);
+        alert("Terjadi kesalahan pada server.");
+      }
     }
   };
 
@@ -80,16 +143,26 @@ export default function ContactForm() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {contacts.map((contact) => (
-          <Card 
-            key={contact.id}
-            contact={contact}
-            onEdit={handleOpenModal}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-10 h-10 animate-spin text-[#0369A1] dark:text-[#E11D48]" />
+        </div>
+      ) : contacts.length === 0 ? (
+        <div className="text-center py-12 border-2 border-dashed border-[#7DD3FC]/30 dark:border-[#991B1B]/30 rounded-[32px]">
+          <p className="text-[#0F172A]/50 dark:text-white/50 font-space">Belum ada kontak yang ditambahkan.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {contacts.map((contact) => (
+            <Card 
+              key={contact.id}
+              contact={contact}
+              onEdit={handleOpenModal}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
       <Modal 
         isOpen={isModalOpen}
@@ -98,6 +171,7 @@ export default function ContactForm() {
         setFormData={setFormData}
         onClose={handleCloseModal}
         onSave={handleSave}
+        isSaving={isSaving}
       />
     </div>
   );
