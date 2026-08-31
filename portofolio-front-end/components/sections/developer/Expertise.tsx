@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Code, Box } from 'lucide-react';
 
 export default function Expertise() {
   const [webSkills, setWebSkills] = useState<any[]>([]);
@@ -22,10 +22,8 @@ export default function Expertise() {
           setWebSkills(web);
           setGameSkills(game);
         }
-
       } catch (error) {
         console.error("Gagal mengambil data tools:", error);
-
       } finally {
         setIsLoading(false);
       }
@@ -37,13 +35,16 @@ export default function Expertise() {
   const SkillItem = ({ skill }: { skill: any }) => (
     <div className="bg-[#F0F9FF] dark:bg-[#121212] w-[100px] h-[100px] md:w-28 md:h-28 rounded-3xl shadow-sm border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 flex flex-col items-center justify-center gap-3 hover:-translate-y-2 hover:border-[#7DD3FC] dark:hover:border-[#F43F5E] transition duration-300 cursor-pointer">
       
-      {/* Icon Image */}
-      <div className="w-8 h-8 md:w-10 md:h-10 relative flex items-center justify-center">
-        <img 
-          src={skill.image} 
-          alt={skill.name}
-          className="max-w-full max-h-full object-contain drop-shadow-md"
-        />
+      <div className="w-8 h-8 md:w-10 md:h-10 relative flex items-center justify-center text-[#0369A1] dark:text-[#F43F5E]">
+        {skill.icon ? (
+          <img 
+            src={skill.icon} 
+            alt={skill.name}
+            className="max-w-full max-h-full object-contain drop-shadow-md"
+          />
+        ) : (
+           skill.category === 'web' ? <Code size={32} /> : <Box size={32} />
+        )}
       </div>
 
       <span className="font-bold text-xs md:text-sm text-[#0F172A] dark:text-white font-space text-center px-1">
@@ -69,7 +70,6 @@ export default function Expertise() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left pt-4">
-          
           <div className="bg-white dark:bg-[#121212]/80 p-8 md:p-10 rounded-[32px] shadow-xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300">
             <h3 className="text-2xl font-bold text-[#0F172A] dark:text-white font-space mb-8 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-4">
               Web & App Development
@@ -87,7 +87,6 @@ export default function Expertise() {
               {gameSkills.map((skill, i) => <SkillItem key={i} skill={skill} />)}
             </div>
           </div>
-
         </div>
       )}
     </section>

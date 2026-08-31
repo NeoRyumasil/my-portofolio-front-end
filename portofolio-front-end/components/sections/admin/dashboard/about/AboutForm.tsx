@@ -17,6 +17,23 @@ export default function AboutForm() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
 
+  const getDirectImageUrl = (url: string) => {
+    if (!url) return url;
+    if (url.includes('drive.google.com/file/d/')) {
+      const match = url.match(/\/d\/(.+?)\//);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+    }
+    if (url.includes('drive.google.com/open?id=')) {
+      const id = url.split('id=')[1];
+      if (id) {
+        return `https://drive.google.com/uc?export=view&id=${id}`;
+      }
+    }
+    return url;
+  };
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -32,7 +49,7 @@ export default function AboutForm() {
           setTagline(data.tagline);
           setBio(data.bio);
           setCvLink(data.cvLink || '');
-          setProfileImage(data.profileImage || '');
+          setProfileImage(getDirectImageUrl(data.profileImage || ''));
         }
       } catch (error) {
         console.error("Gagal mengambil data profile:", error);
@@ -44,7 +61,6 @@ export default function AboutForm() {
     fetchProfile();
   }, []);
 
-  // Fungsi handle upload foto profil ke Google Drive
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -69,7 +85,7 @@ export default function AboutForm() {
       const json = await response.json();
 
       if (response.ok && json.success) {
-        setProfileImage(json.url);
+        setProfileImage(getDirectImageUrl(json.url));
       } else {
         alert(json.message || 'Gagal mengunggah foto profil ke Google Drive');
       }
@@ -88,14 +104,16 @@ export default function AboutForm() {
     try {
       const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      
+
+      const safeImageUrl = getDirectImageUrl(profileImage);
+
       const payload = {
         role,
         fullName: name, 
         tagline,
         bio,
         cvLink,
-        profileImage
+        profileImage: safeImageUrl
       };
 
       const method = profileId ? 'PUT' : 'POST';
@@ -132,6 +150,11 @@ export default function AboutForm() {
     }
   };
 
+  const handleManualUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setProfileImage(getDirectImageUrl(val));
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20 bg-white dark:bg-[#121212] rounded-[32px] border border-[#7DD3FC]/20 dark:border-[#991B1B]/30">
@@ -143,7 +166,6 @@ export default function AboutForm() {
   return (
     <form onSubmit={handleSave} className="bg-white dark:bg-[#121212] p-8 md:p-10 rounded-[32px] shadow-sm border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 space-y-8">
       
-      {/* Role */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Role / Badge Title</label>
         <div className="relative flex items-center">
@@ -160,7 +182,6 @@ export default function AboutForm() {
         </div>
       </div>
 
-      {/* Full Name */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Full Name</label>
         <div className="relative flex items-center">
@@ -177,7 +198,6 @@ export default function AboutForm() {
         </div>
       </div>
 
-      {/* Tagline */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">Hero Tagline</label>
         <div className="relative flex items-center">
@@ -194,7 +214,6 @@ export default function AboutForm() {
         </div>
       </div>
 
-      {/* Bio */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">About Bio</label>
         <div className="relative">
@@ -212,8 +231,6 @@ export default function AboutForm() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-        {/* CV Link */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space ml-1">CV Document Link</label>
           <div className="relative flex items-center">
@@ -229,7 +246,6 @@ export default function AboutForm() {
           </div>
         </div>
 
-        {/* Profile Image dengan Upload File */}
         <div className="space-y-2 border border-[#7DD3FC]/30 dark:border-[#991B1B]/30 p-4 rounded-2xl bg-[#F0F9FF]/20 dark:bg-[#000000]/20">
           <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center gap-2 mb-3">
             <ImageIcon size={16} /> Profile Image
@@ -266,17 +282,15 @@ export default function AboutForm() {
               <input 
                 type="text" 
                 value={profileImage} 
-                onChange={(e) => setProfileImage(e.target.value)} 
+                onChange={handleManualUrlChange} 
                 placeholder="Or paste URL..." 
                 className="w-full px-2 py-1 text-xs bg-transparent border-b border-[#7DD3FC]/50 dark:border-[#991B1B]/50 text-[#0F172A] dark:text-white focus:outline-none" 
               />
             </div>
           </div>
         </div>
-
       </div>
 
-      {/* Action Buttons */}
       <div className="pt-6 border-t border-[#7DD3FC]/20 dark:border-[#991B1B]/30 flex justify-end gap-4">
         <button
           type="button"
@@ -294,7 +308,6 @@ export default function AboutForm() {
           {isSaving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
-
     </form>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Briefcase, Mail, Globe, XIcon } from 'lucide-react';
 
 export default function Contact() {
   const [socials, setSocials] = useState<any[]>([]);
@@ -21,7 +21,7 @@ export default function Contact() {
 
       } catch (error) {
         console.error("Gagal mengambil data kontak:", error);
-        
+
       } finally {
         setIsLoading(false);
       }
@@ -29,6 +29,33 @@ export default function Contact() {
 
     fetchContacts();
   }, []);
+
+  const renderIcon = (type: string, value: string) => {
+    if (type === 'image' && value) {
+      return <img src={value} alt="icon" className="w-full h-full object-contain drop-shadow-sm" />;
+    }
+    
+    switch (value) {
+      case 'briefcase': return <Briefcase size={28} />;
+      case 'mail': return <Mail size={28} />;
+      case 'twitter': return <XIcon size={28} />;
+      default: return <Globe size={28} />;
+    }
+  };
+
+  const formatUrl = (url: string) => {
+    if (!url) return '#';
+    
+    if (url.includes('@') && !url.startsWith('mailto:') && !url.startsWith('http')) {
+      return `mailto:${url}`;
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('mailto:')) {
+      return `https://${url}`;
+    }
+    
+    return url;
+  };
 
   return (
     <section id="contact" className="text-center space-y-12 pt-20 pb-10 transition-colors duration-300">
@@ -51,25 +78,17 @@ export default function Contact() {
         <div className="flex flex-wrap justify-center gap-6 pt-4">
           {socials.map((social, i) => (
             <a 
-              href={social.url || '#'} 
+              href={formatUrl(social.url)} 
               target="_blank" 
               rel="noopener noreferrer"
               key={social.id || i} 
               className="bg-white dark:bg-[#121212] w-40 h-40 rounded-3xl shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 flex flex-col items-center justify-center gap-4 hover:-translate-y-2 hover:border-[#7DD3FC] dark:hover:border-[#F43F5E] transition duration-300"
             >
               <div className="text-[#0369A1] dark:text-[#F43F5E] bg-[#F0F9FF] dark:bg-[#E11D48]/10 p-4 rounded-full w-16 h-16 flex items-center justify-center overflow-hidden">
-                {social.image ? (
-                  <img 
-                    src={social.image} 
-                    alt={social.name} 
-                    className="w-full h-full object-contain drop-shadow-sm" 
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                )}
+                {renderIcon(social.iconType, social.iconValue)}
               </div>
               <span className="font-bold text-sm text-[#0F172A] dark:text-white font-space">
-                {social.name}
+                {social.platform}
               </span>
             </a>
           ))}

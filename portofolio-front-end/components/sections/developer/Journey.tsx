@@ -53,14 +53,14 @@ export default function Journey() {
                 <div className="absolute left-0 top-1 md:top-1/2 md:-translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#0369A1] dark:bg-[#E11D48] ring-[6px] ring-[#F0F9FF] dark:ring-[#000000] shadow-sm"></div>
                 <div className="md:w-5/12 shrink-0">
                   <h3 className="text-4xl md:text-5xl font-black text-[#0F172A] dark:text-white font-space tracking-tight">
-                    {item.date}
+                    {item.year}
                   </h3>
                 </div>
                 <div className="md:w-7/12 flex-1">
                   <div className="bg-white dark:bg-[#121212] p-8 md:p-12 rounded-[32px] shadow-xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 hover:-translate-y-2 hover:border-[#7DD3FC] dark:hover:border-[#F43F5E] transition-all duration-300">
                     <div className="mb-4 md:mb-6">
                       <span className="text-[#0369A1] dark:text-[#F43F5E] font-bold text-base md:text-lg mb-2 block font-space uppercase tracking-wider">
-                        {item.prefix || 'Studied at'}
+                        {item.label || 'Studied at'}
                       </span>
                       <h4 className="text-3xl md:text-4xl font-extrabold text-[#0F172A] dark:text-white leading-tight">
                         {item.title}

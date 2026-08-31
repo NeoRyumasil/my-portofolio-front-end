@@ -21,7 +21,7 @@ export default function About() {
 
       } catch (error) {
         console.error("Gagal mengambil data profile:", error);
-
+        
       } finally {
         setIsLoading(false);
       }
@@ -29,6 +29,26 @@ export default function About() {
 
     fetchProfile();
   }, []);
+
+  const getDirectImageUrl = (url: string) => {
+    if (!url) return url;
+    
+    if (url.includes('drive.google.com/file/d/')) {
+      const match = url.match(/\/d\/(.+?)\//);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+    }
+    
+    if (url.includes('drive.google.com/open?id=')) {
+      const id = url.split('id=')[1];
+      if (id) {
+        return `https://drive.google.com/uc?export=view&id=${id}`;
+      }
+    }
+
+    return url;
+  };
 
   if (isLoading) {
     return (
@@ -38,9 +58,12 @@ export default function About() {
     );
   }
 
-  const title = profile?.title || "Crafting Digital Sanctuaries Through Code.";
-  const description = profile?.description || "Hi, I'm Muhammad Alvin Ababil. I blend technical precision with ethereal design principles to build robust applications and seamless user experiences.";
-  const image = profile?.image || "/image_73338d.png";
+  const title = profile?.tagline || "Crafting Digital Sanctuaries Through Code.";
+  const description = profile?.bio || "Hi, I'm Muhammad Alvin Ababil. I blend technical precision with ethereal design principles to build robust applications and seamless user experiences.";
+  
+  const rawImage = profile?.profileImage || "/image_73338d.png";
+  const image = getDirectImageUrl(rawImage);
+  
   const role = profile?.role || "Web Backend and Game Developer";
 
   return (

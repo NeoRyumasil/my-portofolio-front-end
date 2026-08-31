@@ -1,23 +1,45 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/misc/ThemeToggle';
-import { ArrowLeft } from 'lucide-react'; // Tambahkan import icon ArrowLeft
+import { ArrowLeft } from 'lucide-react';
 
 export default function Header() {
   const pathname = usePathname();
   const isProjectPage = pathname?.includes('/project');
-  
-  // Tambahkan deteksi untuk halaman admin
   const isAdminPage = pathname?.includes('/admin');
+
+  const [cvLink, setCvLink] = useState<string>('#');
+
+  useEffect(() => {
+    if (!isAdminPage) {
+      const fetchProfile = async () => {
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          const response = await fetch(`${baseUrl}/api/profile`);
+          const json = await response.json();
+          
+          if (json.success && json.data) {
+            const profileData = Array.isArray(json.data) ? json.data[0] : json.data;
+            if (profileData?.cvLink) {
+              setCvLink(profileData.cvLink);
+            }
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data CV:", error);
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [isAdminPage]);
 
   return (
     <header className="fixed top-0 w-full bg-[#F0F9FF]/80 dark:bg-[#000000]/80 backdrop-blur-md z-50 shadow-sm border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         
-        {/* Render tulisan Back to Portfolio jika di halaman admin, jika tidak render Nama */}
         {isAdminPage ? (
           <Link href="/developer" className="inline-flex items-center gap-2 text-[#0369A1] dark:text-[#F43F5E] font-bold font-space text-sm hover:opacity-80 hover:-translate-x-1 transition-all">
             <ArrowLeft size={16} />
@@ -29,7 +51,6 @@ export default function Header() {
           </Link>
         )}
 
-        {/* Sembunyikan navigasi tengah sama sekali kalau di halaman admin */}
         {!isAdminPage && (
           <nav className="hidden md:flex space-x-8 text-sm font-semibold text-[#0F172A]/70 dark:text-[#ffffff]/60">
             {isProjectPage ? (
@@ -55,11 +76,15 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           
-          {/* Sembunyikan tombol CV kalau di halaman admin */}
           {!isAdminPage && (
-            <button className="bg-[#0369A1] dark:bg-[#E11D48] text-white px-6 py-2 rounded-full text-sm font-bold shadow-md hover:bg-[#0369A1]/90 dark:hover:bg-[#F43F5E] transition font-space">
+            <a 
+              href={cvLink}
+              target={cvLink !== '#' ? "_blank" : "_self"}
+              rel="noopener noreferrer"
+              className="bg-[#0369A1] dark:bg-[#E11D48] text-white px-6 py-2 rounded-full text-sm font-bold shadow-md hover:bg-[#0369A1]/90 dark:hover:bg-[#F43F5E] transition font-space cursor-pointer inline-flex"
+            >
               GET MY CV
-            </button>
+            </a>
           )}
         </div>   
       </div>

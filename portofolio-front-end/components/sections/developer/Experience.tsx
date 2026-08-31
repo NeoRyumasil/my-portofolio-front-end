@@ -43,7 +43,7 @@ export default function Experience() {
     <section id="works" className="space-y-12 pt-24 pb-12 transition-colors duration-300">
       <div className="space-y-4 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-8 text-center">
         <h2 className="text-5xl md:text-7xl font-extrabold text-[#0F172A] dark:text-white font-space tracking-tight">
-          Project Overview.
+          Project Overview
         </h2>
       </div>
 

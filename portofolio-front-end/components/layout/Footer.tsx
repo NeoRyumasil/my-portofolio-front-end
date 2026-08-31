@@ -1,8 +1,6 @@
 "use client";
 
 import React from 'react';
-import { Briefcase, Mail, XIcon } from 'lucide-react';
-import { SiGithub } from 'react-icons/si';
 import { usePathname } from 'next/navigation';
 
 export default function Footer() {
@@ -24,24 +22,6 @@ export default function Footer() {
           <p className="text-sm text-[#0F172A]/50 dark:text-white/50 dark:font-hanken">
             © 2026 Muhammad Alvin Ababil. All Rights Reserved.
           </p>
-        </div>
-        
-        <div className="flex gap-4">
-          <a href="#" className="w-10 h-10 rounded-full bg-[#F0F9FF] dark:bg-[#E11D48]/10 flex items-center justify-center text-[#0369A1] dark:text-[#F43F5E] hover:bg-[#7DD3FC] dark:hover:bg-[#E11D48] hover:text-white dark:hover:text-white transition-all duration-300">
-            <Briefcase size={18} />
-          </a>
-
-          <a href="#" className="w-10 h-10 rounded-full bg-[#F0F9FF] dark:bg-[#E11D48]/10 flex items-center justify-center text-[#0369A1] dark:text-[#F43F5E] hover:bg-[#7DD3FC] dark:hover:bg-[#E11D48] hover:text-white dark:hover:text-white transition-all duration-300">
-            <SiGithub size={18} />
-          </a>
-
-          <a href="#" className="w-10 h-10 rounded-full bg-[#F0F9FF] dark:bg-[#E11D48]/10 flex items-center justify-center text-[#0369A1] dark:text-[#F43F5E] hover:bg-[#7DD3FC] dark:hover:bg-[#E11D48] hover:text-white dark:hover:text-white transition-all duration-300">
-            <Mail size={18} />
-          </a>
-
-          <a href="#" className="w-10 h-10 rounded-full bg-[#F0F9FF] dark:bg-[#E11D48]/10 flex items-center justify-center text-[#0369A1] dark:text-[#F43F5E] hover:bg-[#7DD3FC] dark:hover:bg-[#E11D48] hover:text-white dark:hover:text-white transition-all duration-300">
-            <XIcon size={18} />
-          </a>
         </div>
       </div>
     </footer>
