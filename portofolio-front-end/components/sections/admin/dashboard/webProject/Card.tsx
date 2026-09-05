@@ -34,9 +34,11 @@ export default function Card({ project, onEdit, onDelete }: WebProjectCardProps)
 
       {/* Thumbnail */}
       <div className="h-48 relative bg-[#F0F9FF] dark:bg-[#000000] border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 overflow-hidden">
-        <div className="absolute top-4 left-4 z-10 bg-[#0F172A] dark:bg-[#121212] text-white border border-white/50 dark:border-[#991B1B]/80 px-3 py-1 font-bold font-space text-xs tracking-wider shadow-md">
+        
+        <div className="absolute top-4 left-4 z-[20] bg-[#0F172A] dark:bg-[#121212] text-white border border-white/50 dark:border-[#991B1B]/80 px-3 py-1 font-bold font-space text-xs tracking-wider shadow-md rounded-tl-xl rounded-br-xl">
           {project.year}
         </div>
+        
         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" style={{ backgroundImage: `url(${project.image})` }}></div>
       </div>
 
@@ -45,17 +47,19 @@ export default function Card({ project, onEdit, onDelete }: WebProjectCardProps)
         <h3 className="text-xl md:text-2xl font-extrabold text-[#0F172A] dark:text-white font-space mb-4 line-clamp-1">
           {project.title}
         </h3>
-        
-        {/* Tech & Role Pills */}
+
         <div className="flex flex-wrap gap-2 mb-4">
           {project.tech.map((tech, i) => (
-            <span key={i} className="bg-[#0369A1] text-white px-3 py-1 rounded-full text-xs font-bold font-space shadow-sm">
+            <span key={i} className="bg-[#0369A1] text-white px-3 py-1 rounded-full text-[10px] font-bold font-space shadow-sm">
               {tech}
             </span>
           ))}
-          <span className="bg-[#E11D48] text-white px-3 py-1 rounded-full text-xs font-bold font-space shadow-sm">
-            {project.role}
-          </span>
+
+          {project.role && project.role.split(',').map((roleItem, idx) => (
+            <span key={`role-${idx}`} className="bg-[#E11D48] text-white px-3 py-1 rounded-full text-[10px] font-bold font-space shadow-sm">
+              {roleItem.trim()}
+            </span>
+          ))}
         </div>
 
         <p className="text-sm text-[#0F172A]/70 dark:text-white/70 font-medium line-clamp-3 mb-6">

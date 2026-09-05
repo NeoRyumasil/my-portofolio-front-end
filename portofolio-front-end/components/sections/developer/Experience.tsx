@@ -24,9 +24,19 @@ export default function Experience() {
         const webJson = await webRes.json();
         const gameJson = await gameRes.json();
 
-        if (webJson.success) setWebProjects(webJson.data);
+        const sortByYear = (a: any, b: any) => {
+          const yearA = parseInt(a.year.substring(0, 4)) || 0;
+          const yearB = parseInt(b.year.substring(0, 4)) || 0;
+          return yearB - yearA;
+        };
+
+        if (webJson.success) {
+          setWebProjects(webJson.data.sort(sortByYear));
+        }
         
-        if (gameJson.success) setGameProjects(gameJson.data);
+        if (gameJson.success) {
+          setGameProjects(gameJson.data.sort(sortByYear));
+        }
       } catch (error) {
         console.error("Gagal mengambil data experience:", error);
       } finally {
@@ -81,11 +91,14 @@ export default function Experience() {
           ) : (
             displayedProjects.map((project) => (
               <div key={project.id} className="group flex flex-col lg:flex-row gap-8 lg:gap-16 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="w-full lg:w-5/12 relative">
-                  <div className="absolute -top-4 left-4 md:-left-4 z-10 bg-[#0F172A] dark:bg-[#121212] text-white border border-white/50 dark:border-[#991B1B]/80 px-4 py-1.5 font-bold font-space text-sm tracking-wider shadow-lg">
+                
+                {/* Kontainer Thumbnail */}
+                <div className="w-full lg:w-5/12 relative mt-4 md:mt-0 pt-4 md:pt-0">
+                  <div className="absolute -top-5 -left-2 md:-top-4 md:-left-4 z-[20] bg-[#0F172A] dark:bg-[#121212] text-white border border-[#7DD3FC]/50 dark:border-[#991B1B]/80 px-4 py-1.5 font-bold font-space text-sm tracking-wider shadow-lg rounded-tl-xl rounded-br-xl">
                     {project.year}
                   </div>
-                  <div className="relative w-full aspect-[4/3] bg-white dark:bg-[#121212] rounded-xl overflow-hidden shadow-xl border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 group-hover:border-[#7DD3FC] dark:group-hover:border-[#F43F5E] transition-all duration-500">
+                  
+                  <div className="relative w-full aspect-[4/3] bg-white dark:bg-[#121212] rounded-xl overflow-hidden shadow-xl border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 group-hover:border-[#7DD3FC] dark:group-hover:border-[#F43F5E] transition-all duration-500 z-10">
                     <div className="absolute inset-0 bg-grid-slate-200 dark:bg-grid-white/10 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,#000,rgba(0,0,0,0.6))] z-0"></div>
                     <div 
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 z-10 opacity-90 group-hover:opacity-100"
@@ -93,21 +106,27 @@ export default function Experience() {
                     ></div>
                   </div>
                 </div>
+                
                 <div className="w-full lg:w-7/12 space-y-6 pt-2">
                   <h3 className="text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white font-space group-hover:text-[#0369A1] dark:group-hover:text-[#E11D48] transition-colors duration-300">
                     {project.title}
                   </h3>
+                  
                   <div className="flex flex-wrap gap-3">
                     {project.tech && project.tech.map((tech: string, i: number) => (
-                      <span key={i} className="bg-[#0369A1] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
+                      <span key={`tech-${i}`} className="bg-[#0369A1] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
                         {tech}
                       </span>
                     ))}
-                    <span className="bg-[#E11D48] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
-                      {project.role}
-                    </span>
+      
+                    {project.role && project.role.split(',').map((roleItem: string, idx: number) => (
+                      <span key={`role-${idx}`} className="bg-[#E11D48] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
+                        {roleItem.trim()}
+                      </span>
+                    ))}
                   </div>
-                  <p className="text-lg md:text-xl text-[#0F172A]/80 dark:text-white/80 leading-relaxed font-medium">
+
+                  <p className="text-lg md:text-xl text-[#0F172A]/80 dark:text-white/80 leading-relaxed font-medium line-clamp-3 md:line-clamp-none">
                     {project.description}
                   </p>
                   <div className="pt-4">

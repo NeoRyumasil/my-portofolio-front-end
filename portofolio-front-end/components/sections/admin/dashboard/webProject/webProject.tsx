@@ -30,12 +30,17 @@ export default function WebProject() {
       const json = await response.json();
       
       if (response.ok && json.success) {
-        setProjects(json.data);
+
+        const sortedProjects = json.data.sort((a: any, b: any) => {
+          const yearA = parseInt(a.year?.substring(0, 4)) || 0;
+          const yearB = parseInt(b.year?.substring(0, 4)) || 0;
+          return yearB - yearA;
+        });
+        setProjects(sortedProjects);
       }
 
     } catch (error) {
       console.error("Gagal mengambil data web project:", error);
-
     } finally {
       setIsLoading(false);
     }
@@ -109,7 +114,6 @@ export default function WebProject() {
         alert(json.message);
         fetchProjects(); 
         handleCloseModal();
-
       } else {
         alert(json.message || 'Gagal menyimpan web project');
       }
@@ -117,7 +121,6 @@ export default function WebProject() {
     } catch (error) {
       console.error("Save error:", error);
       alert("Terjadi kesalahan pada server.");
-
     } finally {
       setIsSaving(false);
     }
@@ -141,7 +144,6 @@ export default function WebProject() {
         if (response.ok && json.success) {
           alert("Web project berhasil dihapus!");
           setProjects(projects.filter(p => p.id !== id));
-          
         } else {
           alert(json.message || 'Gagal menghapus proyek');
         }

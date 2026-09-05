@@ -30,7 +30,12 @@ export default function GameProjectForm() {
       const json = await response.json();
       
       if (response.ok && json.success) {
-        setProjects(json.data);
+        const sortedProjects = json.data.sort((a: any, b: any) => {
+          const yearA = parseInt(a.year?.substring(0, 4)) || 0;
+          const yearB = parseInt(b.year?.substring(0, 4)) || 0;
+          return yearB - yearA;
+        });
+        setProjects(sortedProjects);
       }
 
     } catch (error) {
