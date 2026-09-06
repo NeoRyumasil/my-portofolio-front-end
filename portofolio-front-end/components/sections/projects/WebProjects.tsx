@@ -83,7 +83,7 @@ export default function WebProjects() {
             {chunkedProjects.map((chunk, slideIndex) => (
               <div key={slideIndex} className="w-full shrink-0 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-2 md:px-4">
                 {chunk.map((project) => (
-                  <Link href={`/projects/${project.id}`} key={project.id} className="group flex flex-col bg-white dark:bg-[#121212] rounded-[32px] overflow-hidden shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#0369A1]/10 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/50 dark:hover:border-[#F43F5E]/50 transition-all duration-300">
+                  <Link href={`/developer/projects/${project.id}`} key={project.id} className="group flex flex-col bg-white dark:bg-[#121212] rounded-[32px] overflow-hidden shadow-lg shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 border border-[#7DD3FC]/10 dark:border-[#991B1B]/30 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#0369A1]/10 dark:hover:shadow-[#E11D48]/10 hover:border-[#7DD3FC]/50 dark:hover:border-[#F43F5E]/50 transition-all duration-300">
                     <div className="h-48 relative bg-[#F0F9FF] dark:bg-[#000000] border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 overflow-hidden">
                       
                       <div className="absolute top-4 left-4 z-[20] bg-[#0F172A] dark:bg-[#121212] text-white border border-[#7DD3FC]/50 dark:border-[#991B1B]/80 px-3 py-1 font-bold font-space text-xs tracking-wider shadow-lg rounded-tl-xl rounded-br-xl">
