@@ -131,7 +131,7 @@ export default function Experience() {
                   </p>
                   <div className="pt-4">
                     <Link 
-                      href={`/projects/${project.id}`} 
+                      href={`/developer/projects/${project.id}`} 
                       className="inline-flex items-center gap-2 text-[#0369A1] dark:text-[#E11D48] font-bold font-space text-base md:text-lg hover:underline transition-all"
                     >
                       View Detail <ArrowRight size={20} />
