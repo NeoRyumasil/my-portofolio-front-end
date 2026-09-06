@@ -16,9 +16,10 @@ export default function Experience() {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
+        // Menambahkan parameter isTop=true agar hanya memuat proyek unggulan
         const [webRes, gameRes] = await Promise.all([
-          fetch(`${baseUrl}/api/web-projects?limit=3`),
-          fetch(`${baseUrl}/api/game-projects?limit=3`)
+          fetch(`${baseUrl}/api/web-projects?isTop=true&limit=3`),
+          fetch(`${baseUrl}/api/game-projects?isTop=true&limit=3`)
         ]);
 
         const webJson = await webRes.json();
@@ -87,7 +88,7 @@ export default function Experience() {
       ) : (
         <div className="space-y-24 pt-8 min-h-[600px]">
           {displayedProjects.length === 0 ? (
-            <p className="text-center text-gray-500">Belum ada proyek di kategori ini.</p>
+            <p className="text-center text-gray-500">Belum ada proyek unggulan di kategori ini.</p>
           ) : (
             displayedProjects.map((project) => (
               <div key={project.id} className="group flex flex-col lg:flex-row gap-8 lg:gap-16 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
