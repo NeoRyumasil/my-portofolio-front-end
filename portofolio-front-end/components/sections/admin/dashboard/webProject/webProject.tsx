@@ -30,7 +30,6 @@ export default function WebProject() {
       const json = await response.json();
       
       if (response.ok && json.success) {
-
         const sortedProjects = json.data.sort((a: any, b: any) => {
           const yearA = parseInt(a.year?.substring(0, 4)) || 0;
           const yearB = parseInt(b.year?.substring(0, 4)) || 0;
@@ -81,7 +80,6 @@ export default function WebProject() {
     setIsSaving(true);
     
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const techArray = formData.techString.split(',').map(item => item.trim()).filter(item => item !== '');
@@ -102,9 +100,9 @@ export default function WebProject() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', 
         body: JSON.stringify(payload)
       });
 
@@ -129,14 +127,11 @@ export default function WebProject() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
       try {
-        const token = localStorage.getItem('token');
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
         const response = await fetch(`${baseUrl}/api/web-projects/${id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          credentials: 'include', 
         });
 
         const json = await response.json();

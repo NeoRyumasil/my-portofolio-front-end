@@ -66,14 +66,11 @@ export default function Modal({isOpen, editingId, formData, setFormData, onClose
     uploadData.append('image', file);
 
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const response = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
+        credentials: 'include',
         body: uploadData
       });
 
@@ -192,14 +189,12 @@ export default function Modal({isOpen, editingId, formData, setFormData, onClose
             </div>
           </div>
 
-          {/* Text Editor */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center justify-between">
               <span className="flex items-center gap-2"><AlignLeft size={16} /> Description / Full Case Study</span>
               <span className="text-xs text-[#0369A1] dark:text-[#E11D48] font-normal">Markdown Supported</span>
             </label>
             
-            {/* Toolbar */}
             <div className="flex flex-wrap items-center gap-1.5 p-2 bg-[#F0F9FF] dark:bg-[#1E1E1E] border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-t-xl">
               <button
                 type="button"

@@ -69,7 +69,6 @@ export default function CredentialForm() {
     setIsSaving(true);
     
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const method = editingId ? 'PUT' : 'POST';
       const url = editingId ? `${baseUrl}/api/credentials/${editingId}` : `${baseUrl}/api/credentials`;
@@ -77,9 +76,9 @@ export default function CredentialForm() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', 
         body: JSON.stringify(formData)
       });
 
@@ -105,14 +104,11 @@ export default function CredentialForm() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this credential?')) {
       try {
-        const token = localStorage.getItem('token');
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
         const response = await fetch(`${baseUrl}/api/credentials/${id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          credentials: 'include' 
         });
 
         const json = await response.json();

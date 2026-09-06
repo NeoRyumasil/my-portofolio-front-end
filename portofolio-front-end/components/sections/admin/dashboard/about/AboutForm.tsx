@@ -71,14 +71,11 @@ export default function AboutForm() {
     uploadData.append('image', file);
 
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const response = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}` 
-        },
+        credentials: 'include', 
         body: uploadData
       });
 
@@ -102,7 +99,6 @@ export default function AboutForm() {
     setIsSaving(true);
     
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
       const safeImageUrl = getDirectImageUrl(profileImage);
@@ -124,9 +120,9 @@ export default function AboutForm() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', 
         body: JSON.stringify(payload)
       });
 

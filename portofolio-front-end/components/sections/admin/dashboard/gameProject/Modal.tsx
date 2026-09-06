@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { X, Save, Image as ImageIcon, Calendar, Briefcase, Code, AlignLeft, Type, Link as LinkIcon, Gamepad2, Loader2, UploadCloud } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { X, Save, Image as ImageIcon, Calendar, Briefcase, Code, AlignLeft, Type, Link as LinkIcon, Gamepad2, Loader2, UploadCloud, Bold, Italic, Heading2, List, Quote } from 'lucide-react';
 
 interface GameProjectModalProps {
   isOpen: boolean;
@@ -16,7 +16,6 @@ interface GameProjectModalProps {
     image: string;
     url: string;
   };
-
   setFormData: React.Dispatch<React.SetStateAction<{
     year: string;
     title: string;
@@ -27,13 +26,34 @@ interface GameProjectModalProps {
     url: string;
   }>>;
   onClose: () => void;
-  onSave: (e: React.FormEvent) => void;
+  onSave: (e: React.FormEvent) => void | Promise<void>;
 }
 
 export default function Modal({ isOpen, editingId, formData, setFormData, onClose, onSave, isSaving }: GameProjectModalProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (!isOpen) return null;
+
+  const handleInsertFormat = (syntaxBefore: string, syntaxAfter: string = '') => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = formData.description;
+    const selectedText = text.substring(start, end);
+
+    const replacement = `${syntaxBefore}${selectedText || 'Text'}${syntaxAfter}`;
+    const newText = text.substring(0, start) + replacement + text.substring(end);
+
+    setFormData({ ...formData, description: newText });
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + syntaxBefore.length, end + syntaxBefore.length);
+    }, 0);
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,14 +65,11 @@ export default function Modal({ isOpen, editingId, formData, setFormData, onClos
     uploadData.append('image', file);
 
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const response = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}` 
-        },
+        credentials: 'include', // Menggunakan HttpOnly Cookie
         body: uploadData
       });
 
@@ -174,15 +191,61 @@ export default function Modal({ isOpen, editingId, formData, setFormData, onClos
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center gap-2">
-              <AlignLeft size={16} /> Description / Full Case Study
+            <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center justify-between">
+              <span className="flex items-center gap-2"><AlignLeft size={16} /> Description / Full Case Study</span>
+              <span className="text-xs text-[#0369A1] dark:text-[#E11D48] font-normal">Markdown Supported</span>
             </label>
+            
+            <div className="flex flex-wrap items-center gap-1.5 p-2 bg-[#F0F9FF] dark:bg-[#1E1E1E] border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-t-xl">
+              <button
+                type="button"
+                onClick={() => handleInsertFormat('## ')}
+                className="p-2 hover:bg-[#0369A1]/20 dark:hover:bg-[#E11D48]/20 rounded-lg text-[#0F172A] dark:text-white transition-colors"
+                title="Heading 2"
+              >
+                <Heading2 size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInsertFormat('**', '**')}
+                className="p-2 hover:bg-[#0369A1]/20 dark:hover:bg-[#E11D48]/20 rounded-lg text-[#0F172A] dark:text-white transition-colors"
+                title="Bold"
+              >
+                <Bold size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInsertFormat('*', '*')}
+                className="p-2 hover:bg-[#0369A1]/20 dark:hover:bg-[#E11D48]/20 rounded-lg text-[#0F172A] dark:text-white transition-colors"
+                title="Italic"
+              >
+                <Italic size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInsertFormat('- ')}
+                className="p-2 hover:bg-[#0369A1]/20 dark:hover:bg-[#E11D48]/20 rounded-lg text-[#0F172A] dark:text-white transition-colors"
+                title="Bullet List"
+              >
+                <List size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInsertFormat('> ')}
+                className="p-2 hover:bg-[#0369A1]/20 dark:hover:bg-[#E11D48]/20 rounded-lg text-[#0F172A] dark:text-white transition-colors"
+                title="Quote"
+              >
+                <Quote size={16} />
+              </button>
+            </div>
+
             <textarea 
+              ref={textareaRef}
               value={formData.description} 
               onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
-              rows={10} 
-              placeholder="Write the full case study here. Press Enter to create new paragraphs..." 
-              className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48] resize-y" 
+              rows={12} 
+              placeholder="Write your game case study here. Use the toolbar above for headings, bold, or lists..." 
+              className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border-t-0 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-b-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48] resize-y min-h-[220px]" 
               required 
             />
           </div>

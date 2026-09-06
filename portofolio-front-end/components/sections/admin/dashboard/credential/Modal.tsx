@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { X, Save, Image as ImageIcon, Award, Building, Type, Link as LinkIcon, Loader2, UploadCloud } from 'lucide-react';
 
@@ -19,7 +21,7 @@ interface CredentialModalProps {
     url: string;
   }>>;
   onClose: () => void;
-  onSave: (e: React.FormEvent) => void;
+  onSave: (e: React.FormEvent) => void | Promise<void>;
 }
 
 export default function Modal({ isOpen, editingId, formData, setFormData, onClose, onSave, isSaving }: CredentialModalProps) {
@@ -37,14 +39,11 @@ export default function Modal({ isOpen, editingId, formData, setFormData, onClos
     uploadData.append('image', file);
 
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const response = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}` 
-        },
+        credentials: 'include',
         body: uploadData
       });
 
@@ -92,7 +91,6 @@ export default function Modal({ isOpen, editingId, formData, setFormData, onClos
             <input type="text" value={formData.issuer} onChange={(e) => setFormData({ ...formData, issuer: e.target.value })} placeholder="e.g., Microsoft" className="w-full px-4 py-3 bg-[#F0F9FF]/50 dark:bg-[#000000]/50 border border-[#7DD3FC]/50 dark:border-[#991B1B]/50 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0369A1] dark:focus:ring-[#E11D48]" required />
           </div>
 
-          {/* UPLOAD GAMBAR SECTION */}
           <div className="space-y-2 border border-[#7DD3FC]/30 dark:border-[#991B1B]/30 p-4 rounded-2xl bg-[#F0F9FF]/20 dark:bg-[#000000]/20">
             <label className="text-sm font-bold text-[#0F172A] dark:text-white font-space flex items-center gap-2 mb-3">
               <ImageIcon size={16} /> Certificate Image

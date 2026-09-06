@@ -24,15 +24,13 @@ export default function LoginForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
+        credentials: 'include',
       });
 
       const json = await response.json();
 
       if (response.ok && json.success) {
-        localStorage.setItem('token', json.token);
-        document.cookie = `token=${json.token}; path=/; max-age=86400; SameSite=Strict`;
         router.push('/admin/dashboard');
-
       } else {
         setErrorMsg(json.message || 'Gagal melakukan login');
       }

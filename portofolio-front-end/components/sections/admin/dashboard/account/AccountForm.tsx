@@ -19,13 +19,10 @@ export default function AccountForm() {
   const fetchAccounts = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const response = await fetch(`${baseUrl}/api/accounts`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        credentials: 'include'
       });
       
       const json = await response.json();
@@ -55,14 +52,11 @@ export default function AccountForm() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this admin account?')) {
       try {
-        const token = localStorage.getItem('token');
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
         const response = await fetch(`${baseUrl}/api/accounts/${id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          credentials: 'include'
         });
         
         const json = await response.json();
@@ -108,7 +102,6 @@ export default function AccountForm() {
     setIsSaving(true);
     
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const payload: any = { username: formData.username };
@@ -125,9 +118,9 @@ export default function AccountForm() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(payload)
       });
       

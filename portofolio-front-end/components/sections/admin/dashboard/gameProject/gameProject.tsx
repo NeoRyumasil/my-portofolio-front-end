@@ -37,10 +37,8 @@ export default function GameProjectForm() {
         });
         setProjects(sortedProjects);
       }
-
     } catch (error) {
       console.error("Gagal mengambil data proyek game:", error);
-
     } finally {
       setIsLoading(false);
     }
@@ -62,12 +60,10 @@ export default function GameProjectForm() {
         image: project.image,
         url: project.url || ''
       });
-
     } else {
       setEditingId(null);
       setFormData({ year: '', title: '', techString: '', role: '', description: '', image: '', url: '' });
     }
-
     setIsModalOpen(true);
   };
 
@@ -81,7 +77,6 @@ export default function GameProjectForm() {
     setIsSaving(true);
     
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const techArray = formData.techString.split(',').map(item => item.trim()).filter(item => item !== '');
@@ -102,9 +97,9 @@ export default function GameProjectForm() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', 
         body: JSON.stringify(payload)
       });
 
@@ -114,7 +109,6 @@ export default function GameProjectForm() {
         alert(json.message);
         fetchProjects(); 
         handleCloseModal();
-
       } else {
         alert(json.message || 'Gagal menyimpan proyek game');
       }
@@ -122,7 +116,6 @@ export default function GameProjectForm() {
     } catch (error) {
       console.error("Save error:", error);
       alert("Terjadi kesalahan pada server.");
-
     } finally {
       setIsSaving(false);
     }
@@ -131,14 +124,11 @@ export default function GameProjectForm() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this game project?')) {
       try {
-        const token = localStorage.getItem('token');
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
         const response = await fetch(`${baseUrl}/api/game-projects/${id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          credentials: 'include' 
         });
 
         const json = await response.json();
@@ -146,7 +136,6 @@ export default function GameProjectForm() {
         if (response.ok && json.success) {
           alert("Proyek game berhasil dihapus!");
           setProjects(projects.filter(p => p.id !== id));
-
         } else {
           alert(json.message || 'Gagal menghapus proyek');
         }

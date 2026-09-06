@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { XIcon, Globe, ImageIcon, Type, Link as LinkIcon, Save, Loader2, UploadCloud } from 'lucide-react';
 
@@ -37,14 +39,11 @@ export default function Modal({ isOpen, editingId, formData, setFormData, onClos
     uploadData.append('image', file);
 
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
       const response = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}` 
-        },
+        credentials: 'include', 
         body: uploadData
       });
 

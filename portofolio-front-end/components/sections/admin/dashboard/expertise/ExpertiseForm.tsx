@@ -62,7 +62,6 @@ export default function ExpertiseForm() {
     setIsSaving(true);
     
     try {
-      const token = localStorage.getItem('token');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       const method = editingId ? 'PUT' : 'POST';
       const url = editingId ? `${baseUrl}/api/tools/${editingId}` : `${baseUrl}/api/tools`;
@@ -70,9 +69,9 @@ export default function ExpertiseForm() {
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', 
         body: JSON.stringify(formData)
       });
 
@@ -99,14 +98,11 @@ export default function ExpertiseForm() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this tool?')) {
       try {
-        const token = localStorage.getItem('token');
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         
         const response = await fetch(`${baseUrl}/api/tools/${id}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          credentials: 'include' 
         });
 
         const json = await response.json();
