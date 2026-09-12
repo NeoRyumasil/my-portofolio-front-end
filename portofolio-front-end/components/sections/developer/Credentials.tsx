@@ -8,9 +8,24 @@ export default function Credentials() {
   const [certs, setCerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
-  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [itemsPerSlide, setItemsPerSlide] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerSlide(1);
+      } else {
+        setItemsPerSlide(3);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchCredentials = async () => {
@@ -36,9 +51,15 @@ export default function Credentials() {
   }, [page]);
 
   const chunkedCerts = [];
-  for (let i = 0; i < certs.length; i += 3) {
-    chunkedCerts.push(certs.slice(i, i + 3));
+  for (let i = 0; i < certs.length; i += itemsPerSlide) {
+    chunkedCerts.push(certs.slice(i, i + itemsPerSlide));
   }
+
+  useEffect(() => {
+    if (currentIndex >= chunkedCerts.length) {
+      setCurrentIndex(0);
+    }
+  }, [chunkedCerts.length, currentIndex]);
 
   useEffect(() => {
     if (isHovered || chunkedCerts.length === 0) return;
@@ -103,7 +124,7 @@ export default function Credentials() {
               </div>
             ))}
           </div>
-          <div className="flex justify-center gap-3 pt-10">
+          <div className="flex justify-center gap-3 pt-10 flex-wrap px-4">
             {chunkedCerts.map((_, idx) => (
               <button
                 key={idx}

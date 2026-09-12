@@ -66,9 +66,10 @@ export default function About() {
   
   const role = profile?.role || "Web Backend and Game Developer";
 
-  return (
+ return (
     <section id="about" className="flex flex-col-reverse md:flex-row items-center justify-between gap-12 pt-10 transition-colors duration-300">
-      <div className="flex-1 space-y-6">
+
+      <div className="w-full md:flex-1 space-y-6">
         <div className="inline-flex items-center gap-3 bg-[#7DD3FC]/20 dark:bg-[#E11D48]/20 text-[#0369A1] dark:text-[#F43F5E] px-5 py-2.5 rounded-full text-sm md:text-base font-bold tracking-widest font-space shadow-sm">
           <span className="w-3 h-3 rounded-full bg-[#0369A1] dark:bg-[#F43F5E] animate-pulse"></span>
           {role}
@@ -92,8 +93,8 @@ export default function About() {
         </div>
       </div>
 
-      <div className="flex-1 flex justify-end">
-        <div className="group w-full max-w-md aspect-square bg-white dark:bg-[#121212] rounded-[40px] shadow-2xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 p-4 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 hover:border-[#7DD3FC]/60 dark:hover:border-[#F43F5E]/60 hover:shadow-[#7DD3FC]/20 dark:hover:shadow-[#F43F5E]/20 hover:-translate-y-2 transition-all duration-500 cursor-pointer">
+      <div className="w-full md:flex-1 flex justify-center md:justify-end">
+        <div className="group w-full max-w-[280px] sm:max-w-sm md:max-w-md aspect-square bg-white dark:bg-[#121212] rounded-[40px] shadow-2xl shadow-[#0F172A]/5 dark:shadow-[#E11D48]/5 p-4 border border-[#7DD3FC]/20 dark:border-[#991B1B]/30 hover:border-[#7DD3FC]/60 dark:hover:border-[#F43F5E]/60 hover:-translate-y-2 transition-all duration-500 cursor-pointer">
           <div 
             className="w-full h-full bg-[#F0F9FF] dark:bg-[#000000] rounded-[30px] overflow-hidden flex items-center justify-center relative bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
             style={{ backgroundImage: `url(${image})` }}
@@ -102,6 +103,7 @@ export default function About() {
           </div>
         </div>
       </div>
+      
     </section>
   );
 }
