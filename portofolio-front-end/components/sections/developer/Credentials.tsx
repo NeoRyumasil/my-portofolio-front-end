@@ -12,6 +12,9 @@ export default function Credentials() {
   const [isHovered, setIsHovered] = useState(false);
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
@@ -69,6 +72,28 @@ export default function Credentials() {
     return () => clearInterval(timer);
   }, [isHovered, chunkedCerts.length]);
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+  
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    if (isLeftSwipe) {
+      setCurrentIndex((prev) => (prev + 1) % chunkedCerts.length);
+    }
+    if (isRightSwipe) {
+      setCurrentIndex((prev) => (prev - 1 + chunkedCerts.length) % chunkedCerts.length);
+    }
+  };
+
   return (
     <section id="credentials" className="text-center space-y-12 pt-20 transition-colors duration-300">
       <div className="space-y-4 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-8 text-center">
@@ -91,6 +116,9 @@ export default function Credentials() {
           className="relative overflow-hidden max-w-6xl mx-auto pt-4"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         >
           <div 
             className="flex transition-transform duration-700 ease-in-out"

@@ -12,6 +12,8 @@ export default function WebProjects() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -71,6 +73,28 @@ export default function WebProjects() {
     return () => clearInterval(timer);
   }, [isHovered, chunkedProjects.length]);
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    if (isLeftSwipe) {
+      setCurrentIndex((prev) => (prev + 1) % chunkedProjects.length);
+    }
+    if (isRightSwipe) {
+      setCurrentIndex((prev) => (prev - 1 + chunkedProjects.length) % chunkedProjects.length);
+    }
+  };
+
   return (
     <section id="web-projects" className="space-y-12 pt-24 pb-12 transition-colors duration-300">
       <div className="space-y-4 border-b border-[#7DD3FC]/20 dark:border-[#991B1B]/30 pb-8 text-center">
@@ -90,6 +114,9 @@ export default function WebProjects() {
           className="relative overflow-hidden pt-8 max-w-7xl mx-auto"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         >
           <div 
             className="flex transition-transform duration-700 ease-in-out"
